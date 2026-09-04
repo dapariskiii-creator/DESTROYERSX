@@ -1,6 +1,7 @@
 /* =========================================
-   DESTROY APPAREL
-   PRE-ORDER SYSTEM
+   DESTROYERSX
+   BUYER SYSTEM
+   DATABASE CONNECTED
 ========================================= */
 
 
@@ -8,38 +9,32 @@
    CONFIG
 ========================= */
 
-const DEFAULT_SETTINGS = {
-    price: 140000,
-    whatsappNumber: "6282142787154",
-    mockupImage: ""
-};
+const API_URL = "/api";
 
-function getSettings() {
-    try {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem("destroyersx_settings")) };
-    } catch (error) {
-        return { ...DEFAULT_SETTINGS };
-    }
-}
-
-const settings = getSettings();
-const PRICE = Number(settings.price) || DEFAULT_SETTINGS.price;
-
-const ORDERS_STORAGE_KEY = "destroyersx_orders";
+const DEFAULT_PRICE = 140000;
 
 
 /* =========================
    ELEMENT
 ========================= */
 
-const orderForm = document.getElementById("orderForm");
+const orderForm =
+    document.getElementById("orderForm");
 
-const nameInput = document.getElementById("name");
-const addressInput = document.getElementById("address");
-const buyerWhatsappInput = document.getElementById("buyerWhatsapp");
-const mockupImage = document.getElementById("mockupImage");
+const nameInput =
+    document.getElementById("name");
 
-const sizeButtons = document.querySelectorAll(".size-btn");
+const addressInput =
+    document.getElementById("address");
+
+const buyerWhatsappInput =
+    document.getElementById("buyerWhatsapp");
+
+const mockupImage =
+    document.getElementById("mockupImage");
+
+const sizeButtons =
+    document.querySelectorAll(".size-btn");
 
 const selectedSizeInput =
     document.getElementById("selectedSize");
@@ -95,12 +90,16 @@ const modalTotal =
 const modalDone =
     document.getElementById("modalDone");
 
+
 /* =========================
    STATE
 ========================= */
 
 let quantity = 1;
+
 let selectedSize = "L";
+
+let PRICE = DEFAULT_PRICE;
 
 
 /* =========================
@@ -110,23 +109,129 @@ let selectedSize = "L";
 function formatRupiah(number) {
 
     return new Intl.NumberFormat("id-ID")
-        .format(number);
+        .format(Number(number) || 0);
 
 }
 
 
-function getSavedOrders() {
+/* =========================
+   LOAD SETTINGS
+========================= */
+
+async function loadSettings() {
+
     try {
-        return JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY)) || [];
-    } catch (error) {
-        return [];
-    }
-}
 
-function saveOrder(order) {
-    const orders = getSavedOrders();
-    orders.unshift(order);
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+        const response =
+            await fetch(`${API_URL}/settings`);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Gagal mengambil settings"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success ||
+            !data.settings
+        ) {
+
+            throw new Error(
+                "Data settings tidak valid"
+            );
+
+        }
+
+
+        /* =========================
+           HARGA DARI DATABASE
+        ========================= */
+
+        PRICE =
+            Number(data.settings.price)
+            || DEFAULT_PRICE;
+
+
+        /* =========================
+           UPDATE HARGA
+        ========================= */
+
+        if (productPrice) {
+
+            productPrice.textContent =
+                formatRupiah(PRICE);
+
+        }
+
+
+        if (displayPrice) {
+
+            displayPrice.textContent =
+                formatRupiah(PRICE);
+
+        }
+
+
+        /* =========================
+           MOCKUP DARI DATABASE
+        ========================= */
+
+        if (
+            data.settings.mockupImage &&
+            mockupImage
+        ) {
+
+            mockupImage.src =
+                data.settings.mockupImage;
+
+            mockupImage.classList.add(
+                "visible"
+            );
+
+        } else if (mockupImage) {
+
+            mockupImage.removeAttribute(
+                "src"
+            );
+
+            mockupImage.classList.remove(
+                "visible"
+            );
+
+        }
+
+
+        /* =========================
+           UPDATE TOTAL
+        ========================= */
+
+        updateOrder();
+
+
+        console.log(
+            "Settings berhasil dimuat dari database"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LOAD SETTINGS ERROR:",
+            error
+        );
+
+
+        PRICE = DEFAULT_PRICE;
+
+        updateOrder();
+
+    }
+
 }
 
 
@@ -140,26 +245,41 @@ function updateOrder() {
         PRICE * quantity;
 
 
+    /* QUANTITY */
+
     quantityDisplay.textContent =
         quantity;
 
+
+    /* SIZE */
 
     summarySize.textContent =
         selectedSize;
 
 
+    /* QUANTITY SUMMARY */
+
     summaryQuantity.textContent =
         `${quantity} PCS`;
 
 
+    /* TOTAL */
+
     totalPrice.textContent =
         formatRupiah(total);
 
+
+    /* PRODUCT PRICE */
+
     if (productPrice) {
+
         productPrice.textContent =
             formatRupiah(PRICE);
+
     }
 
+
+    /* OPTIONAL DISPLAY PRICE */
 
     if (displayPrice) {
 
@@ -183,12 +303,16 @@ sizeButtons.forEach(button => {
 
             sizeButtons.forEach(btn => {
 
-                btn.classList.remove("active");
+                btn.classList.remove(
+                    "active"
+                );
 
             });
 
 
-            button.classList.add("active");
+            button.classList.add(
+                "active"
+            );
 
 
             selectedSize =
@@ -257,12 +381,14 @@ minusBtn.addEventListener(
 
 orderForm.addEventListener(
     "submit",
-    function(event) {
+    async function(event) {
 
         event.preventDefault();
 
 
-        /* GET DATA */
+        /* =========================
+           GET DATA
+        ========================= */
 
         const name =
             nameInput.value.trim();
@@ -274,7 +400,9 @@ orderForm.addEventListener(
             buyerWhatsappInput.value.trim();
 
 
-        /* VALIDATION */
+        /* =========================
+           VALIDATION
+        ========================= */
 
         if (!name) {
 
@@ -301,14 +429,23 @@ orderForm.addEventListener(
 
         }
 
+
         if (!buyerWhatsapp) {
-            alert("Nomor WhatsApp aktif wajib diisi.");
+
+            alert(
+                "Nomor WhatsApp aktif wajib diisi."
+            );
+
             buyerWhatsappInput.focus();
+
             return;
+
         }
 
 
-        /* CALCULATE */
+        /* =========================
+           CALCULATE
+        ========================= */
 
         const totalQty =
             quantity;
@@ -317,26 +454,157 @@ orderForm.addEventListener(
             PRICE * totalQty;
 
 
-        saveOrder({
-            name,
-            address,
-            buyerWhatsapp,
-            size: selectedSize,
-            quantity: totalQty,
-            total,
-            createdAt: new Date().toISOString()
-        });
+        /* =========================
+           DISABLE BUTTON
+        ========================= */
+
+        const submitButton =
+            orderForm.querySelector(
+                'button[type="submit"]'
+            );
 
 
-        modalName.textContent = name;
-        modalAddress.textContent = address;
-        modalWhatsapp.textContent = buyerWhatsapp;
-        modalSize.textContent = selectedSize;
-        modalQuantity.textContent = `${totalQty} PCS`;
-        modalTotal.textContent = `Rp ${formatRupiah(total)}`;
+        if (submitButton) {
 
-        successModal.classList.add("show");
-        document.body.style.overflow = "hidden";
+            submitButton.disabled = true;
+
+            submitButton.querySelector(
+                "span"
+            ).textContent =
+                "MENYIMPAN...";
+
+        }
+
+
+        try {
+
+            /* =========================
+               SEND TO DATABASE
+            ========================= */
+
+            const response =
+                await fetch(
+                    `${API_URL}/orders`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            name:
+                                name,
+
+                            address:
+                                address,
+
+                            buyerWhatsapp:
+                                buyerWhatsapp,
+
+                            size:
+                                selectedSize,
+
+                            quantity:
+                                totalQty,
+
+                            total:
+                                total
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Pesanan gagal disimpan"
+                );
+
+            }
+
+
+            /* =========================
+               MODAL
+            ========================= */
+
+            modalName.textContent =
+                name;
+
+            modalAddress.textContent =
+                address;
+
+            modalWhatsapp.textContent =
+                buyerWhatsapp;
+
+            modalSize.textContent =
+                selectedSize;
+
+            modalQuantity.textContent =
+                `${totalQty} PCS`;
+
+            modalTotal.textContent =
+                `Rp ${formatRupiah(total)}`;
+
+
+            successModal.classList.add(
+                "show"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+
+
+            console.log(
+                "Pesanan berhasil masuk database. ID:",
+                data.orderId
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "CREATE ORDER ERROR:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Gagal menyimpan pesanan."
+            );
+
+
+        } finally {
+
+            /* =========================
+               ENABLE BUTTON
+            ========================= */
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.querySelector(
+                    "span"
+                ).textContent =
+                    "PESAN SEKARANG";
+
+            }
+
+        }
 
     }
 );
@@ -348,22 +616,34 @@ orderForm.addEventListener(
 
 function closeOrderModal() {
 
-    successModal.classList.remove("show");
+    successModal.classList.remove(
+        "show"
+    );
 
     document.body.style.overflow = "";
 
 }
 
 
+/* =========================
+   CLOSE BUTTON
+========================= */
+
 closeModal.addEventListener(
     "click",
     closeOrderModal
 );
 
+
+/* =========================
+   DONE BUTTON
+========================= */
+
 modalDone.addEventListener(
     "click",
     closeOrderModal
 );
+
 
 /* =========================
    CLOSE OUTSIDE
@@ -396,7 +676,9 @@ document.addEventListener(
 
         if (
             event.key === "Escape" &&
-            successModal.classList.contains("show")
+            successModal.classList.contains(
+                "show"
+            )
         ) {
 
             closeOrderModal();
@@ -413,7 +695,4 @@ document.addEventListener(
 
 updateOrder();
 
-if (settings.mockupImage && mockupImage) {
-    mockupImage.src = settings.mockupImage;
-    mockupImage.classList.add("visible");
-}
+loadSettings();
