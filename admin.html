@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | DESTROYERSX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+    <div class="noise"></div>
+    <div class="red-light"></div>
+
+    <header class="navbar">
+        <div class="brand">
+            <img src="logo destroyersx.png" alt="Logo" class="brand-logo">
+            <div>
+                <h1>DESTROYERSX</h1>
+                <small>ADMIN PANEL</small>
+            </div>
+        </div>
+        <a href="index.html" class="admin-link">HALAMAN PEMBELI</a>
+    </header>
+
+    <main>
+        <section class="admin-section">
+            <div class="section-heading">
+                <span>ADMIN / PENJUAL</span>
+                <h2>CONTROL <em>ROOM.</em></h2>
+            </div>
+
+            <div class="admin-grid">
+                <form id="settingsForm" class="settings-panel">
+                    <div class="panel-label">PENGATURAN PRODUK</div>
+                    <div class="field">
+                        <label for="mockupFile"><span>01</span> FOTO MOCKUP</label>
+                        <input type="file" id="mockupFile" accept="image/*">
+                        <small class="field-help">Foto disimpan di browser ini.</small>
+                    </div>
+                    <div class="mockup-preview-wrap">
+                        <img id="adminMockupPreview" class="admin-mockup-preview" alt="Preview mockup">
+                        <span id="mockupEmpty">BELUM ADA MOCKUP</span>
+                    </div>
+                    <div class="field">
+                        <label for="adminPrice"><span>02</span> HARGA KAOS / PCS</label>
+                        <input type="number" id="adminPrice" min="1" required>
+                    </div>
+                    <div class="field">
+                        <label for="sellerWhatsapp"><span>03</span> NOMOR WA PENJUAL</label>
+                        <input type="tel" id="sellerWhatsapp" placeholder="Contoh: 6281234567890" required>
+                    </div>
+                    <button type="submit" class="order-btn">SIMPAN PENGATURAN <span class="arrow">→</span></button>
+                    <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
+                </form>
+
+                <aside class="admin-note">
+                    <span class="warning-title">STATUS SISTEM</span>
+                    <h3>READY<br><span>TO SELL.</span></h3>
+                    <p>Pengaturan yang disimpan langsung tampil di halaman pembeli.</p>
+                    <a href="index.html" class="admin-action">LIHAT TOKO →</a>
+                </aside>
+            </div>
+        </section>
+
+        <section class="database-section admin-database">
+            <div class="section-heading">
+                <span>DATABASE / LIVE ORDERS</span>
+                <h2>DATA <em>PESANAN.</em></h2>
+            </div>
+            <div class="database-toolbar">
+                <span id="orderCount">0 PESANAN TERSIMPAN</span>
+                <button type="button" id="clearOrdersBtn" class="clear-orders-btn">HAPUS SEMUA</button>
+            </div>
+            <div class="database-table-wrap">
+                <table class="database-table">
+                    <thead>
+                        <tr><th>NAMA</th><th>ALAMAT</th><th>WA PEMBELI</th><th>SIZE</th><th>QTY</th><th>TOTAL</th><th>WAKTU</th></tr>
+                    </thead>
+                    <tbody id="ordersTableBody"><tr class="empty-orders"><td colspan="7">BELUM ADA PESANAN</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script src="admin.js"></script>
+</body>
+</html>
