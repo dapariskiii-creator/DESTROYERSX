@@ -201,129 +201,87 @@ async function loadSettings() {
 
 function compressImage(file) {
 
-    return new Promise(
-        (resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-            const reader =
-                new FileReader();
+        const reader = new FileReader();
 
+        reader.onload = function(event) {
 
-            reader.onload = function(event) {
+            const img = new Image();
 
-                const img =
-                    new Image();
+            img.onload = function() {
 
+                const MAX_WIDTH = 900;
 
-                img.onload = function() {
+                let width = img.width;
+                let height = img.height;
 
-                    const MAX_WIDTH = 1200;
+                if (width > MAX_WIDTH) {
 
-                    let width =
-                        img.width;
-
-                    let height =
-                        img.height;
-
-
-                    /* RESIZE */
-
-                    if (
-                        width >
-                        MAX_WIDTH
-                    ) {
-
-                        height =
-                            Math.round(
-                                height *
-                                (
-                                    MAX_WIDTH /
-                                    width
-                                )
-                            );
-
-                        width =
-                            MAX_WIDTH;
-
-                    }
-
-
-                    const canvas =
-                        document.createElement(
-                            "canvas"
-                        );
-
-
-                    canvas.width =
-                        width;
-
-                    canvas.height =
-                        height;
-
-
-                    const ctx =
-                        canvas.getContext(
-                            "2d"
-                        );
-
-
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        width,
-                        height
+                    height = Math.round(
+                        height * (MAX_WIDTH / width)
                     );
 
+                    width = MAX_WIDTH;
 
-                    /*
-                       JPEG QUALITY
-                       0.75 = kualitas bagus
-                    */
+                }
 
-                    const compressed =
-                        canvas.toDataURL(
-                            "image/jpeg",
-                            0.75
-                        );
+                const canvas =
+                    document.createElement("canvas");
 
+                canvas.width = width;
+                canvas.height = height;
 
-                    resolve(
-                        compressed
+                const ctx =
+                    canvas.getContext("2d");
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                const compressed =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.55
                     );
 
-                };
-
-
-                img.onerror =
-                    () => reject(
-                        new Error(
-                            "Gambar tidak dapat dibaca"
-                        )
-                    );
-
-
-                img.src =
-                    event.target.result;
+                resolve(compressed);
 
             };
 
+            img.onerror = function() {
 
-            reader.onerror =
-                () => reject(
+                reject(
                     new Error(
-                        "Gagal membaca file"
+                        "Gambar tidak dapat dibaca"
                     )
                 );
 
+            };
 
-            reader.readAsDataURL(file);
+            img.src = event.target.result;
 
-        }
-    );
+        };
+
+        reader.onerror = function() {
+
+            reject(
+                new Error(
+                    "Gagal membaca file"
+                )
+            );
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 }
-
-
 /* =========================
    SAVE SETTINGS
 ========================= */
