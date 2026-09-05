@@ -55,10 +55,7 @@ async function testDatabase() {
 // =========================
 
 app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "DESTROYERSX API ONLINE"
-    });
+    res.sendFile(__dirname + "/index.html");
 });
 
 // =========================
