@@ -383,7 +383,7 @@ a {
 }
 
 .section-heading > span {
-    color: var(--red);
+    color:white;
 
     font-family: var(--font-mono);
     font-size: 10px;
@@ -441,7 +441,7 @@ a {
 }
 
 .field label span {
-    color: var(--red);
+    color:white;
 }
 
 .field input,
@@ -717,7 +717,7 @@ a {
 
     font-size: 16px;
 
-    color: var(--red);
+    color: white    ;
 
     letter-spacing: 3px;
 }
@@ -855,7 +855,7 @@ footer {
 }
 
 .database-table th {
-    color: var(--red);
+    color: white;
     font-size: 9px;
     letter-spacing: 1px;
 }
@@ -909,7 +909,7 @@ footer {
 
 .panel-label {
     margin-bottom: 35px;
-    color: var(--red);
+    color: white;
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 2px;
@@ -982,7 +982,7 @@ footer {
 .admin-action {
     display: inline-block;
     margin-top: 35px;
-    color: var(--red);
+    color: white;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 1px;

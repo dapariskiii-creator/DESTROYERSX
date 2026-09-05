@@ -1,5 +1,6 @@
+
 const express = require("express");
-const mysql = require("mysql2/promise");
+const { Pool } = require("pg");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -17,18 +18,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 // =========================
-// KONEKSI MYSQL
+// KONEKSI NEON POSTGRESQL
 // =========================
 
-const db = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "destroyersx",
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+const db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 // =========================
@@ -37,17 +34,17 @@ const db = mysql.createPool({
 
 async function testDatabase() {
     try {
-        const connection = await db.getConnection();
+        const connection = await db.connect();
 
         console.log("=================================");
-        console.log("MYSQL BERHASIL TERHUBUNG");
-        console.log("Database : destroyersx");
+        console.log("NEON BERHASIL TERHUBUNG");
+        console.log("Database : Neon PostgreSQL");
         console.log("=================================");
 
         connection.release();
     } catch (error) {
         console.error("=================================");
-        console.error("MYSQL GAGAL TERHUBUNG");
+        console.error("NEON GAGAL TERHUBUNG");
         console.error(error.message);
         console.error("=================================");
     }
@@ -70,28 +67,28 @@ app.get("/", (req, res) => {
 
 app.get("/api/settings", async (req, res) => {
     try {
-        const [rows] = await db.query(
+        const result = await db.query(
             "SELECT * FROM settings WHERE id = 1 LIMIT 1"
         );
 
-        if (rows.length === 0) {
+        if (result.rows.length === 0) {
             return res.json({
                 success: true,
                 settings: {
                     price: 140000,
-                    whatsappNumber: "",
+                    whatsappNumber: "6282142787154",
                     mockupImage: ""
                 }
             });
         }
 
-        const settings = rows[0];
+        const settings = result.rows[0];
 
         res.json({
             success: true,
             settings: {
                 price: settings.price,
-                whatsappNumber: "",
+                whatsappNumber: settings.whatsapp_number,
                 mockupImage: settings.mockup_image || ""
             }
         });
@@ -114,12 +111,9 @@ app.put("/api/settings", async (req, res) => {
     try {
         const {
             price,
+            whatsappNumber,
             mockupImage
         } = req.body;
-
-        console.log("UPDATE SETTINGS REQUEST:");
-        console.log("Harga:", price);
-        console.log("Ada foto:", !!mockupImage);
 
         if (!price || Number(price) <= 0) {
             return res.status(400).json({
@@ -128,24 +122,31 @@ app.put("/api/settings", async (req, res) => {
             });
         }
 
+        if (!whatsappNumber) {
+            return res.status(400).json({
+                success: false,
+                message: "Nomor WhatsApp wajib diisi"
+            });
+        }
+
         await db.query(
             `
             INSERT INTO settings
                 (id, price, whatsapp_number, mockup_image)
             VALUES
-                (1, ?, '', ?)
-            ON DUPLICATE KEY UPDATE
-                price = VALUES(price),
-                whatsapp_number = '',
-                mockup_image = VALUES(mockup_image)
+                (1, $1, $2, $3)
+            ON CONFLICT (id)
+            DO UPDATE SET
+                price = EXCLUDED.price,
+                whatsapp_number = EXCLUDED.whatsapp_number,
+                mockup_image = EXCLUDED.mockup_image
             `,
             [
                 Number(price),
+                whatsappNumber.trim(),
                 mockupImage || null
             ]
         );
-
-        console.log("PENGATURAN BERHASIL DISIMPAN");
 
         res.json({
             success: true,
@@ -157,7 +158,7 @@ app.put("/api/settings", async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: error.message
+            message: "Gagal menyimpan pengaturan"
         });
     }
 });
@@ -168,7 +169,7 @@ app.put("/api/settings", async (req, res) => {
 
 app.get("/api/orders", async (req, res) => {
     try {
-        const [rows] = await db.query(
+        const result = await db.query(
             `
             SELECT
                 id,
@@ -186,7 +187,7 @@ app.get("/api/orders", async (req, res) => {
 
         res.json({
             success: true,
-            orders: rows
+            orders: result.rows
         });
 
     } catch (error) {
@@ -231,7 +232,7 @@ app.post("/api/orders", async (req, res) => {
             });
         }
 
-        const [result] = await db.query(
+        const result = await db.query(
             `
             INSERT INTO orders
                 (
@@ -243,7 +244,8 @@ app.post("/api/orders", async (req, res) => {
                     total
                 )
             VALUES
-                (?, ?, ?, ?, ?, ?)
+                ($1, $2, $3, $4, $5, $6)
+            RETURNING id
             `,
             [
                 name.trim(),
@@ -258,7 +260,7 @@ app.post("/api/orders", async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Pesanan berhasil disimpan",
-            orderId: result.insertId
+            orderId: result.rows[0].id
         });
 
     } catch (error) {
@@ -318,3 +320,4 @@ app.listen(PORT, "0.0.0.0", async () => {
 
     await testDatabase();
 });
+
