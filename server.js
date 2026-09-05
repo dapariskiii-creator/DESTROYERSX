@@ -6,22 +6,41 @@ require("dotenv").config();
 
 const app = express();
 
-// =========================
-// KONFIGURASI SERVER
-// =========================
-
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json({ limit: "15mb" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "/public"));
 // =========================
-// KONEKSI NEON POSTGRESQL
+// MIDDLEWARE
+// =========================
+
+app.use(cors());
+
+app.use(
+    express.json({
+        limit: "15mb"
+    })
+);
+
+app.use(
+    express.urlencoded({
+        extended: true,
+        limit: "15mb"
+    })
+);
+
+// File website ada di folder public
+app.use(
+    express.static(
+        __dirname + "/public"
+    )
+);
+
+// =========================
+// DATABASE NEON
 // =========================
 
 const db = new Pool({
     connectionString: process.env.DATABASE_URL,
+
     ssl: {
         rejectUnauthorized: false
     }
@@ -32,8 +51,11 @@ const db = new Pool({
 // =========================
 
 async function testDatabase() {
+
     try {
-        const connection = await db.connect();
+
+        const connection =
+            await db.connect();
 
         console.log("=================================");
         console.log("NEON BERHASIL TERHUBUNG");
@@ -41,20 +63,40 @@ async function testDatabase() {
         console.log("=================================");
 
         connection.release();
+
     } catch (error) {
+
         console.error("=================================");
         console.error("NEON GAGAL TERHUBUNG");
         console.error(error.message);
         console.error("=================================");
+
     }
+
 }
 
 // =========================
-// HALAMAN TEST SERVER
+// HALAMAN UTAMA
 // =========================
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/index.html");
+
+    res.sendFile(
+        __dirname + "/public/index.html"
+    );
+
+});
+
+// =========================
+// ADMIN PAGE
+// =========================
+
+app.get("/admin", (req, res) => {
+
+    res.sendFile(
+        __dirname + "/public/admin.html"
+    );
+
 });
 
 // =========================
@@ -62,41 +104,85 @@ app.get("/", (req, res) => {
 // =========================
 
 app.get("/api/settings", async (req, res) => {
-    try {
-        const result = await db.query(
-            "SELECT * FROM settings WHERE id = 1 LIMIT 1"
-        );
 
+    try {
+
+        const result =
+            await db.query(
+                `
+                SELECT
+                    id,
+                    price,
+                    whatsapp_number,
+                    mockup_image,
+                    updated_at
+                FROM settings
+                WHERE id = 1
+                LIMIT 1
+                `
+            );
+
+        // Kalau settings belum ada
         if (result.rows.length === 0) {
+
             return res.json({
+
                 success: true,
+
                 settings: {
+
                     price: 140000,
-                    whatsappNumber: "6282142787154",
+
+                    whatsappNumber: "",
+
                     mockupImage: ""
+
                 }
+
             });
+
         }
 
-        const settings = result.rows[0];
+        const settings =
+            result.rows[0];
 
         res.json({
+
             success: true,
+
             settings: {
-                price: settings.price,
-                whatsappNumber: settings.whatsapp_number,
-                mockupImage: settings.mockup_image || ""
+
+                price:
+                    settings.price,
+
+                whatsappNumber:
+                    settings.whatsapp_number || "",
+
+                mockupImage:
+                    settings.mockup_image || ""
+
             }
+
         });
 
     } catch (error) {
-        console.error("GET SETTINGS ERROR:", error);
+
+        console.error(
+            "GET SETTINGS ERROR:",
+            error
+        );
 
         res.status(500).json({
+
             success: false,
-            message: "Gagal mengambil pengaturan"
+
+            message:
+                "Gagal mengambil pengaturan"
+
         });
+
     }
+
 });
 
 // =========================
@@ -104,59 +190,154 @@ app.get("/api/settings", async (req, res) => {
 // =========================
 
 app.put("/api/settings", async (req, res) => {
+
     try {
+
         const {
             price,
             whatsappNumber,
             mockupImage
         } = req.body;
 
-        if (!price || Number(price) <= 0) {
+        // =========================
+        // VALIDASI HARGA
+        // =========================
+
+        if (
+            !price ||
+            Number(price) <= 0
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Harga tidak valid"
+
+                message:
+                    "Harga tidak valid"
+
             });
+
         }
 
-        if (!whatsappNumber) {
-            return res.status(400).json({
-                success: false,
-                message: "Nomor WhatsApp wajib diisi"
-            });
+        // =========================
+        // VALIDASI FOTO
+        // =========================
+
+        let imageData =
+            mockupImage || null;
+
+        /*
+        Jika ada gambar Base64,
+        pastikan masih dalam batas aman.
+        */
+
+        if (
+            imageData &&
+            typeof imageData === "string"
+        ) {
+
+            const maxImageSize =
+                12 * 1024 * 1024;
+
+            if (
+                imageData.length >
+                maxImageSize
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Ukuran foto terlalu besar setelah dikompres"
+
+                });
+
+            }
+
         }
+
+        // =========================
+        // SIMPAN DATABASE
+        // =========================
 
         await db.query(
             `
             INSERT INTO settings
-                (id, price, whatsapp_number, mockup_image)
+                (
+                    id,
+                    price,
+                    whatsapp_number,
+                    mockup_image
+                )
             VALUES
-                (1, $1, $2, $3)
+                (
+                    1,
+                    $1,
+                    $2,
+                    $3
+                )
             ON CONFLICT (id)
             DO UPDATE SET
-                price = EXCLUDED.price,
-                whatsapp_number = EXCLUDED.whatsapp_number,
-                mockup_image = EXCLUDED.mockup_image
+
+                price =
+                    EXCLUDED.price,
+
+                whatsapp_number =
+                    EXCLUDED.whatsapp_number,
+
+                mockup_image =
+                    EXCLUDED.mockup_image,
+
+                updated_at =
+                    CURRENT_TIMESTAMP
             `,
             [
+
                 Number(price),
-                whatsappNumber.trim(),
-                mockupImage || null
+
+                whatsappNumber
+                    ? String(
+                        whatsappNumber
+                    ).trim()
+                    : "",
+
+                imageData
+
             ]
         );
 
+        console.log(
+            "SETTINGS BERHASIL DISIMPAN"
+        );
+
         res.json({
+
             success: true,
-            message: "Pengaturan berhasil disimpan"
+
+            message:
+                "Pengaturan berhasil disimpan"
+
         });
 
     } catch (error) {
-        console.error("UPDATE SETTINGS ERROR:", error);
+
+        console.error(
+            "UPDATE SETTINGS ERROR:",
+            error
+        );
 
         res.status(500).json({
+
             success: false,
-            message: "Gagal menyimpan pengaturan"
+
+            message:
+                "Gagal menyimpan pengaturan"
+
         });
+
     }
+
 });
 
 // =========================
@@ -164,36 +345,54 @@ app.put("/api/settings", async (req, res) => {
 // =========================
 
 app.get("/api/orders", async (req, res) => {
+
     try {
-        const result = await db.query(
-            `
-            SELECT
-                id,
-                name,
-                address,
-                buyer_whatsapp,
-                size,
-                quantity,
-                total,
-                created_at
-            FROM orders
-            ORDER BY created_at DESC
-            `
-        );
+
+        const result =
+            await db.query(
+                `
+                SELECT
+                    id,
+                    name,
+                    address,
+                    buyer_whatsapp,
+                    size,
+                    quantity,
+                    total,
+                    created_at
+                FROM orders
+                ORDER BY
+                    created_at DESC
+                `
+            );
 
         res.json({
+
             success: true,
-            orders: result.rows
+
+            orders:
+                result.rows
+
         });
 
     } catch (error) {
-        console.error("GET ORDERS ERROR:", error);
+
+        console.error(
+            "GET ORDERS ERROR:",
+            error
+        );
 
         res.status(500).json({
+
             success: false,
-            message: "Gagal mengambil data pesanan"
+
+            message:
+                "Gagal mengambil data pesanan"
+
         });
+
     }
+
 });
 
 // =========================
@@ -201,7 +400,9 @@ app.get("/api/orders", async (req, res) => {
 // =========================
 
 app.post("/api/orders", async (req, res) => {
+
     try {
+
         const {
             name,
             address,
@@ -211,62 +412,134 @@ app.post("/api/orders", async (req, res) => {
             total
         } = req.body;
 
-        if (!name || !address || !size || !quantity || !total) {
+        // =========================
+        // VALIDASI
+        // =========================
+
+        if (
+            !name ||
+            !address ||
+            !size ||
+            !quantity ||
+            !total
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Data pesanan belum lengkap"
+
+                message:
+                    "Data pesanan belum lengkap"
+
             });
+
         }
 
-        const qty = Number(quantity);
-        const orderTotal = Number(total);
+        const qty =
+            Number(quantity);
 
-        if (qty <= 0 || orderTotal <= 0) {
+        const orderTotal =
+            Number(total);
+
+        if (
+            qty <= 0 ||
+            orderTotal <= 0
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Quantity atau total tidak valid"
+
+                message:
+                    "Quantity atau total tidak valid"
+
             });
+
         }
 
-        const result = await db.query(
-            `
-            INSERT INTO orders
-                (
-                    name,
-                    address,
-                    buyer_whatsapp,
-                    size,
-                    quantity,
-                    total
-                )
-            VALUES
-                ($1, $2, $3, $4, $5, $6)
-            RETURNING id
-            `,
-            [
-                name.trim(),
-                address.trim(),
-                buyerWhatsapp ? buyerWhatsapp.trim() : null,
-                size.trim(),
-                qty,
-                orderTotal
-            ]
+        // =========================
+        // SIMPAN ORDER
+        // =========================
+
+        const result =
+            await db.query(
+                `
+                INSERT INTO orders
+                    (
+                        name,
+                        address,
+                        buyer_whatsapp,
+                        size,
+                        quantity,
+                        total
+                    )
+                VALUES
+                    (
+                        $1,
+                        $2,
+                        $3,
+                        $4,
+                        $5,
+                        $6
+                    )
+                RETURNING id
+                `,
+                [
+
+                    String(name).trim(),
+
+                    String(address).trim(),
+
+                    buyerWhatsapp
+                        ? String(
+                            buyerWhatsapp
+                        ).trim()
+                        : null,
+
+                    String(size).trim(),
+
+                    qty,
+
+                    orderTotal
+
+                ]
+            );
+
+        console.log(
+            "ORDER BERHASIL DISIMPAN:",
+            result.rows[0].id
         );
 
         res.status(201).json({
+
             success: true,
-            message: "Pesanan berhasil disimpan",
-            orderId: result.rows[0].id
+
+            message:
+                "Pesanan berhasil disimpan",
+
+            orderId:
+                result.rows[0].id
+
         });
 
     } catch (error) {
-        console.error("CREATE ORDER ERROR:", error);
+
+        console.error(
+            "CREATE ORDER ERROR:",
+            error
+        );
 
         res.status(500).json({
+
             success: false,
-            message: "Gagal menyimpan pesanan"
+
+            message:
+                "Gagal menyimpan pesanan"
+
         });
+
     }
+
 });
 
 // =========================
@@ -274,46 +547,107 @@ app.post("/api/orders", async (req, res) => {
 // =========================
 
 app.delete("/api/orders", async (req, res) => {
+
     try {
-        await db.query("DELETE FROM orders");
+
+        await db.query(
+            "DELETE FROM orders"
+        );
 
         res.json({
+
             success: true,
-            message: "Semua pesanan berhasil dihapus"
+
+            message:
+                "Semua pesanan berhasil dihapus"
+
         });
 
     } catch (error) {
-        console.error("DELETE ORDERS ERROR:", error);
+
+        console.error(
+            "DELETE ORDERS ERROR:",
+            error
+        );
 
         res.status(500).json({
+
             success: false,
-            message: "Gagal menghapus semua pesanan"
+
+            message:
+                "Gagal menghapus semua pesanan"
+
         });
+
     }
+
 });
 
 // =========================
-// ERROR HANDLER
+// API 404
 // =========================
 
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "API tidak ditemukan"
-    });
-});
+app.use(
+    "/api",
+    (req, res) => {
+
+        res.status(404).json({
+
+            success: false,
+
+            message:
+                "API tidak ditemukan"
+
+        });
+
+    }
+);
 
 // =========================
-// JALANKAN SERVER
+// WEBSITE 404
 // =========================
 
-app.listen(PORT, "0.0.0.0", async () => {
-    console.log("=================================");
-    console.log("DESTROYERSX SERVER");
-    console.log(`PORT : ${PORT}`);
-    console.log(`URL  : http://localhost:${PORT}`);
-    console.log("=================================");
+app.use(
+    (req, res) => {
 
-    await testDatabase();
-});
+        res.status(404).send(
+            "Halaman tidak ditemukan"
+        );
+
+    }
+);
+
+// =========================
+// START SERVER
+// =========================
+
+app.listen(
+    PORT,
+    "0.0.0.0",
+    async () => {
+
+        console.log(
+            "================================="
+        );
+
+        console.log(
+            "DESTROYERSX SERVER"
+        );
+
+        console.log(
+            `PORT : ${PORT}`
+        );
+
+        console.log(
+            `URL  : http://localhost:${PORT}`
+        );
+
+        console.log(
+            "================================="
+        );
+
+        await testDatabase();
+
+    }
+);
 
