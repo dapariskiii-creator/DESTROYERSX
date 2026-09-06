@@ -85,6 +85,7 @@ const modalDone =
 
 /* =========================
    STATE UKURAN
+   SEMUA DIMULAI DARI 0
 ========================= */
 
 const sizeQuantities = {
@@ -93,7 +94,7 @@ const sizeQuantities = {
 
     M: 0,
 
-    L: 1,
+    L: 0,
 
     XL: 0,
 
@@ -179,27 +180,20 @@ function getSizeText() {
 
 function updateOrder() {
 
-
-    /* TOTAL QUANTITY */
-
     const totalQuantity =
         getTotalQuantity();
 
 
-    /* DETAIL SIZE */
-
     const sizeText =
         getSizeText();
 
-
-    /* TOTAL HARGA */
 
     const total =
         PRICE * totalQuantity;
 
 
     /* =========================
-       UPDATE JUMLAH TIAP SIZE
+       UPDATE JUMLAH SIZE
     ========================= */
 
     Object.keys(sizeQuantities)
@@ -216,6 +210,37 @@ function updateOrder() {
 
                     element.textContent =
                         sizeQuantities[size];
+
+                }
+
+
+                /* =========================
+                   ACTIVE ROW
+                ========================= */
+
+                const row =
+                    element?.closest(
+                        ".size-quantity-row"
+                    );
+
+
+                if (row) {
+
+                    if (
+                        sizeQuantities[size] > 0
+                    ) {
+
+                        row.classList.add(
+                            "has-quantity"
+                        );
+
+                    } else {
+
+                        row.classList.remove(
+                            "has-quantity"
+                        );
+
+                    }
 
                 }
 
@@ -236,7 +261,7 @@ function updateOrder() {
 
 
     /* =========================
-       SUMMARY QUANTITY
+       SUMMARY JUMLAH
     ========================= */
 
     if (summaryQuantity) {
@@ -304,7 +329,6 @@ sizeQtyButtons.forEach(
             "click",
             function() {
 
-
                 const size =
                     this.dataset.size;
 
@@ -312,10 +336,6 @@ sizeQtyButtons.forEach(
                 const action =
                     this.dataset.action;
 
-
-                /* =========================
-                   CEK SIZE
-                ========================= */
 
                 if (
                     !Object.prototype
@@ -338,7 +358,6 @@ sizeQtyButtons.forEach(
                 if (
                     action === "plus"
                 ) {
-
 
                     const totalNow =
                         getTotalQuantity();
@@ -368,7 +387,6 @@ sizeQtyButtons.forEach(
                     action === "minus"
                 ) {
 
-
                     if (
                         sizeQuantities[size] > 0
                     ) {
@@ -390,13 +408,12 @@ sizeQtyButtons.forEach(
 
 
 /* =========================
-   LOAD SETTINGS DATABASE
+   LOAD SETTINGS
 ========================= */
 
 async function loadSettings() {
 
     try {
-
 
         const response =
             await fetch(
@@ -439,10 +456,6 @@ async function loadSettings() {
             ) || DEFAULT_PRICE;
 
 
-        /* =========================
-           UPDATE HARGA
-        ========================= */
-
         if (productPrice) {
 
             productPrice.textContent =
@@ -468,7 +481,6 @@ async function loadSettings() {
             mockupImage
         ) {
 
-
             mockupImage.src =
                 data.settings.mockupImage;
 
@@ -477,9 +489,7 @@ async function loadSettings() {
                 "visible"
             );
 
-
         } else if (mockupImage) {
-
 
             mockupImage.removeAttribute(
                 "src"
@@ -493,10 +503,6 @@ async function loadSettings() {
         }
 
 
-        /* =========================
-           UPDATE
-        ========================= */
-
         updateOrder();
 
 
@@ -506,7 +512,6 @@ async function loadSettings() {
 
 
     } catch (error) {
-
 
         console.error(
             "LOAD SETTINGS ERROR:",
@@ -531,18 +536,12 @@ async function loadSettings() {
 
 if (orderForm) {
 
-
     orderForm.addEventListener(
         "submit",
         async function(event) {
 
-
             event.preventDefault();
 
-
-            /* =========================
-               DATA PEMBELI
-            ========================= */
 
             const name =
                 nameInput.value.trim();
@@ -555,10 +554,6 @@ if (orderForm) {
             const buyerWhatsapp =
                 buyerWhatsappInput.value.trim();
 
-
-            /* =========================
-               DATA SIZE
-            ========================= */
 
             const totalQty =
                 getTotalQuantity();
@@ -603,7 +598,7 @@ if (orderForm) {
 
 
             /* =========================
-               VALIDASI WHATSAPP
+               VALIDASI WA
             ========================= */
 
             if (!buyerWhatsapp) {
@@ -635,7 +630,7 @@ if (orderForm) {
 
 
             /* =========================
-               HITUNG TOTAL
+               TOTAL
             ========================= */
 
             const total =
@@ -653,7 +648,6 @@ if (orderForm) {
 
 
             if (submitButton) {
-
 
                 submitButton.disabled =
                     true;
@@ -676,7 +670,6 @@ if (orderForm) {
 
 
             try {
-
 
                 /* =========================
                    KIRIM DATABASE
@@ -727,10 +720,6 @@ if (orderForm) {
                 const data =
                     await response.json();
 
-
-                /* =========================
-                   CEK RESPONSE
-                ========================= */
 
                 if (
                     !response.ok ||
@@ -821,7 +810,6 @@ if (orderForm) {
 
             } catch (error) {
 
-
                 console.error(
                     "CREATE ORDER ERROR:",
                     error
@@ -836,13 +824,7 @@ if (orderForm) {
 
             } finally {
 
-
-                /* =========================
-                   ENABLE BUTTON
-                ========================= */
-
                 if (submitButton) {
-
 
                     submitButton.disabled =
                         false;
@@ -876,7 +858,6 @@ if (orderForm) {
 ========================= */
 
 function closeOrderModal() {
-
 
     if (successModal) {
 
@@ -927,11 +908,9 @@ if (modalDone) {
 
 if (successModal) {
 
-
     successModal.addEventListener(
         "click",
         function(event) {
-
 
             if (
                 event.target ===
@@ -956,7 +935,6 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-
         if (
             event.key === "Escape" &&
             successModal &&
@@ -980,4 +958,3 @@ document.addEventListener(
 updateOrder();
 
 loadSettings();
-
