@@ -1629,3 +1629,173 @@ footer {
     }
 }
 
+/* ==================================================
+   MULTI SIZE + QUANTITY
+================================================== */
+
+.size-quantity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.size-quantity-row {
+    display: grid;
+    grid-template-columns: 1fr 45px 45px 45px;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 12px;
+
+    border: 1px solid var(--line);
+    background: rgba(10, 10, 10, .75);
+
+    transition: .2s ease;
+}
+
+.size-quantity-row:hover {
+    border-color: #555;
+}
+
+.size-quantity-row strong {
+    color: #fff;
+
+    font-family: var(--font-title);
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.size-quantity-row span {
+    color: #fff;
+
+    text-align: center;
+
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.size-qty-btn {
+    width: 45px;
+    height: 40px;
+
+    border: 1px solid #fff;
+
+    background: transparent;
+    color: #fff;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+.size-qty-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+}
+
+.size-qty-btn:active {
+    transform: scale(.95);
+}
+
+/* SIZE YANG SEDANG TERISI */
+
+.size-quantity-row.has-quantity {
+    border-color: var(--red);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(225, 6, 0, .08),
+            rgba(10, 10, 10, .75)
+        );
+}
+
+.size-quantity-row.has-quantity strong {
+    color: var(--red);
+}
+
+/* INFO MAKSIMAL PESANAN */
+
+.size-limit-text {
+    margin-top: 10px;
+
+    color: #555;
+
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+.size-limit-text span {
+    color: var(--red);
+}
+
+/* SUMMARY SIZE */
+
+#summarySize {
+    text-align: right;
+    max-width: 65%;
+
+    color: #fff;
+
+    font-family: var(--font-mono);
+    font-size: 10px;
+
+    line-height: 1.6;
+}
+
+/* RESPONSIVE MULTI SIZE */
+
+@media (max-width: 600px) {
+
+    .size-quantity-list {
+        gap: 8px;
+    }
+
+    .size-quantity-row {
+        grid-template-columns: 1fr 40px 40px 40px;
+        gap: 6px;
+
+        padding: 9px 10px;
+    }
+
+    .size-quantity-row strong {
+        font-size: 18px;
+    }
+
+    .size-qty-btn {
+        width: 40px;
+        height: 38px;
+
+        font-size: 20px;
+    }
+
+    #summarySize {
+        max-width: 60%;
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .size-quantity-row {
+        grid-template-columns: 1fr 36px 36px 36px;
+    }
+
+    .size-qty-btn {
+        width: 36px;
+        height: 36px;
+
+        font-size: 18px;
+    }
+
+    .size-quantity-row strong {
+        font-size: 16px;
+    }
+}
