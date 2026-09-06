@@ -1,3 +1,4 @@
+
 :root {
     --black: #070707;
     --black-2: #0d0d0d;
@@ -14,7 +15,6 @@
     --font-main: "Oswald", sans-serif;
     --font-mono: "Roboto Mono", monospace;
 }
-
 
 /* =========================
    RESET
@@ -35,15 +35,16 @@ body {
     color: var(--white);
     font-family: var(--font-main);
     overflow-x: hidden;
-    background-image: 
-         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
         url('bg merah.png');
+
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
 }
-
 
 button,
 input,
@@ -59,7 +60,6 @@ a {
     color: inherit;
     text-decoration: none;
 }
-
 
 /* =========================
    BACKGROUND
@@ -80,7 +80,6 @@ a {
     position: fixed;
     width: 600px;
     height: 600px;
-
     top: -300px;
     right: -250px;
 
@@ -90,7 +89,6 @@ a {
 
     pointer-events: none;
 }
-
 
 /* =========================
    NAVBAR
@@ -113,7 +111,22 @@ a {
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
+}
+
+.brand-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center;
+    flex-shrink: 0;
+}
+
+.brand div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .brand-mark {
@@ -133,17 +146,19 @@ a {
 }
 
 .brand h1 {
+    margin: 0;
     font-family: var(--font-title);
     font-size: 25px;
-    line-height: .8;
+    line-height: 1.2;
     letter-spacing: 2px;
 }
 
 .brand small {
-    font-family: var(--font-mono);
+    margin: 0;
     color: var(--gray);
+    font-family: var(--font-mono);
     font-size: 8px;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
 }
 
 .nav-status {
@@ -188,24 +203,21 @@ a {
     }
 }
 
-
 /* =========================
    HERO
 ========================= */
 
 .hero {
     min-height: 700px;
-
     padding: 80px 7%;
 
     display: grid;
     grid-template-columns: 1fr 1fr;
 
     align-items: center;
-
     position: relative;
 
-    border-bottom: 1px solid  #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .hero-content {
@@ -222,26 +234,20 @@ a {
     letter-spacing: 3px;
 
     color: #fff;
-
     margin-bottom: 25px;
 }
 
 .eyebrow span {
     background: var(--red);
     color: white;
-
     padding: 5px 9px;
 }
 
 .hero h2 {
     font-family: var(--font-title);
-
     font-size: clamp(75px, 9vw, 150px);
-
     line-height: .82;
-
     letter-spacing: 1px;
-
     transform: skew(-4deg);
 }
 
@@ -250,14 +256,14 @@ a {
 
     text-shadow:
         5px 5px 0 #300000;
-        word-spacing: 1px;
+
+    word-spacing: 1px;
 }
 
 .hero-description {
     max-width: 470px;
 
     color: #fff;
-
     font-size: 17px;
     line-height: 1.6;
 
@@ -267,7 +273,6 @@ a {
 .hero-meta {
     display: flex;
     gap: 35px;
-
     margin-top: 45px;
 }
 
@@ -288,7 +293,6 @@ a {
     font-family: var(--font-mono);
     font-size: 8px;
 }
-
 
 /* =========================
    PRODUCT
@@ -316,23 +320,25 @@ a {
     font-size: 10px;
 }
 
-
 .product-mockup {
     display: none;
+
     width: min(520px, 100%);
     height: 430px;
+
     margin-bottom: 30px;
+
     object-fit: contain;
+
     border: 1px solid var(--line);
     background: rgba(0, 0, 0, .35);
+
     padding: 16px;
 }
 
 .product-mockup.visible {
     display: block;
 }
-
-/* PRODUCT INFO */
 
 .product-info {
     text-align: center;
@@ -351,24 +357,19 @@ a {
 
 .product-info h3 {
     font-family: var(--font-title);
-
     font-size: 32px;
-
     line-height: 1.1;
-
     margin: 8px 0;
 }
 
 .price {
     font-family: var(--font-mono);
-
     color: var(--gray);
 }
 
 .price strong {
     color: white;
 }
-
 
 /* =========================
    ORDER
@@ -378,26 +379,23 @@ a {
     padding: 100px 7%;
     background: transparent;
 }
+
 .section-heading {
     margin-bottom: 65px;
 }
 
 .section-heading > span {
-    color:white;
+    color: white;
 
     font-family: var(--font-mono);
     font-size: 10px;
-
     letter-spacing: 3px;
 }
 
 .section-heading h2 {
     font-family: var(--font-title);
-
     font-size: clamp(55px, 7vw, 100px);
-
     line-height: .9;
-
     margin-top: 10px;
 }
 
@@ -408,16 +406,13 @@ a {
 
 .order-layout {
     max-width: 1200px;
-
     margin: auto;
 
     display: grid;
-
     grid-template-columns: 1.4fr .7fr;
 
     gap: 80px;
 }
-
 
 /* =========================
    FORM
@@ -433,7 +428,6 @@ a {
     gap: 12px;
 
     font-family: var(--font-mono);
-
     font-size: 11px;
     letter-spacing: 2px;
 
@@ -441,7 +435,7 @@ a {
 }
 
 .field label span {
-    color:white;
+    color: white;
 }
 
 .field input,
@@ -458,7 +452,6 @@ a {
     outline: none;
 
     color: white;
-
     font-size: 17px;
 
     transition: .3s;
@@ -478,15 +471,11 @@ a {
     border-color: var(--red);
 }
 
-
 /* SIZE */
 
 .sizes {
     display: grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
+    grid-template-columns: repeat(5, 1fr);
     gap: 8px;
 }
 
@@ -500,7 +489,6 @@ a {
     color: #777;
 
     font-family: var(--font-title);
-
     font-size: 20px;
 
     transition: .2s;
@@ -513,15 +501,12 @@ a {
 
 .size-btn.active {
     background: var(--red);
-
     color: white;
-
     border-color: var(--red);
 
     box-shadow:
         4px 4px 0 #470000;
 }
-
 
 /* QUANTITY */
 
@@ -531,7 +516,7 @@ a {
     display: grid;
     grid-template-columns: 55px 1fr 55px;
 
-    border: 1px solid  #fff;
+    border: 1px solid #fff;
 
     background: #101010;
 }
@@ -542,7 +527,6 @@ a {
     border: none;
 
     background: transparent;
-
     color: white;
 
     font-size: 25px;
@@ -564,7 +548,6 @@ a {
     font-family: var(--font-mono);
 }
 
-
 /* SUMMARY */
 
 .summary {
@@ -572,19 +555,17 @@ a {
 
     padding: 25px 0;
 
-    border-top: 1px solid  #fff;
+    border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
 }
 
 .summary-row {
     display: flex;
-
     justify-content: space-between;
 
     margin: 9px 0;
 
     font-family: var(--font-mono);
-
     font-size: 11px;
 
     color: #fff;
@@ -596,9 +577,7 @@ a {
 
 .summary-line {
     height: 1px;
-
     background: #222;
-
     margin: 18px 0;
 }
 
@@ -608,10 +587,8 @@ a {
 
 .summary-row.total strong {
     color: var(--red);
-
     font-size: 22px;
 }
-
 
 /* ORDER BUTTON */
 
@@ -619,7 +596,6 @@ a {
     width: 100%;
 
     margin-top: 25px;
-
     padding: 20px 25px;
 
     display: flex;
@@ -629,13 +605,10 @@ a {
     border: none;
 
     background: var(--red);
-
     color: white;
 
     font-family: var(--font-title);
-
     font-size: 22px;
-
     letter-spacing: 1px;
 
     transition: .2s;
@@ -663,12 +636,9 @@ a {
     color: #555;
 
     font-family: var(--font-mono);
-
     font-size: 8px;
-
     letter-spacing: 1px;
 }
-
 
 /* =========================
    SIDE
@@ -681,7 +651,7 @@ a {
 .warning-box {
     padding: 35px;
 
-    border: 1px solid  #fff;
+    border: 1px solid #fff;
 
     background:
         linear-gradient(
@@ -691,7 +661,6 @@ a {
         );
 
     position: relative;
-
     overflow: hidden;
 }
 
@@ -704,7 +673,6 @@ a {
     top: -45px;
 
     font-family: var(--font-title);
-
     font-size: 180px;
 
     color: #181818;
@@ -714,22 +682,22 @@ a {
     position: relative;
 
     font-family: var(--font-mono);
-
     font-size: 16px;
 
-    color: white    ;
-
+    color: white;
     letter-spacing: 3px;
 }
 
 .warning-box h3 {
     font-size: 2.5rem;
     font-weight: 700;
+
     line-height: 1.2;
+
     margin: 20px 0;
+
     letter-spacing: 2px;
 }
-
 
 .warning-box p {
     position: relative;
@@ -737,7 +705,6 @@ a {
     color: #777;
 
     font-size: 14px;
-
     line-height: 1.6;
 }
 
@@ -748,33 +715,30 @@ a {
 .details > div {
     padding: 17px 0;
 
-    border-bottom: 1px solid  #fff;
+    border-bottom: 1px solid #fff;
 
     display: flex;
     flex-direction: column;
+
     gap: 5px;
 }
 
 .details span {
     font-family: var(--font-mono);
-
     font-size: 8px;
 
     color: #555;
-
     letter-spacing: 2px;
 }
 
 .details strong {
     font-family: var(--font-mono);
-
     font-size: 16px;
 }
 
 .details strong.open {
     color: var(--red);
 }
-
 
 /* =========================
    FOOTER
@@ -783,20 +747,27 @@ a {
 footer {
     padding: 30px 7%;
 
-    border-top: 1px solid  #fff;
+    border-top: 1px solid #fff;
 
     display: flex;
-
     justify-content: space-between;
     align-items: center;
 
     color: #555;
 
     font-family: var(--font-mono);
-
     font-size: 8px;
-
     letter-spacing: 1px;
+}
+
+.footer-logo {
+    color: white;
+    font-family: var(--font-title);
+    font-size: 25px;
+}
+
+.footer-logo span {
+    color: var(--red);
 }
 
 /* =========================
@@ -812,8 +783,11 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     margin: 35px 0 15px;
+
     color: var(--gray);
+
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 1px;
@@ -821,9 +795,12 @@ footer {
 
 .clear-orders-btn {
     padding: 10px 14px;
-    border: 1px solid #ffff;
+
+    border: 1px solid #fff;
+
     background: transparent;
     color: var(--white);
+
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 1px;
@@ -841,7 +818,9 @@ footer {
 .database-table {
     width: 100%;
     min-width: 850px;
+
     border-collapse: collapse;
+
     font-family: var(--font-mono);
     font-size: 10px;
 }
@@ -849,7 +828,9 @@ footer {
 .database-table th,
 .database-table td {
     padding: 14px 12px;
+
     border-bottom: 1px solid var(--line);
+
     text-align: left;
     vertical-align: top;
 }
@@ -895,21 +876,27 @@ footer {
 .admin-grid {
     max-width: 1200px;
     margin: auto;
+
     display: grid;
     grid-template-columns: 1.4fr .7fr;
+
     gap: 80px;
 }
 
 .settings-panel,
 .admin-note {
     border: 1px solid var(--line);
+
     padding: 35px;
+
     background: rgba(10, 10, 10, .75);
 }
 
 .panel-label {
     margin-bottom: 35px;
+
     color: white;
+
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 2px;
@@ -919,12 +906,17 @@ footer {
 .settings-panel input[type="tel"],
 .settings-panel input[type="file"] {
     width: 100%;
+
     padding: 15px 0;
+
     border: 0;
     border-bottom: 1px solid #fff;
+
     outline: 0;
+
     background: transparent;
     color: var(--white);
+
     font-size: 16px;
 }
 
@@ -934,27 +926,37 @@ footer {
 
 .field-help {
     display: block;
+
     margin-top: 8px;
+
     color: var(--gray);
+
     font-family: var(--font-mono);
     font-size: 9px;
 }
 
 .mockup-preview-wrap {
     min-height: 190px;
+
     margin-bottom: 35px;
+
     border: 1px dashed #555;
+
     display: grid;
     place-items: center;
+
     color: #555;
+
     font-family: var(--font-mono);
     font-size: 10px;
 }
 
 .admin-mockup-preview {
     display: none;
+
     width: 100%;
     height: 190px;
+
     object-fit: contain;
 }
 
@@ -964,6 +966,7 @@ footer {
 
 .admin-note h3 {
     margin: 20px 0;
+
     font-family: var(--font-title);
     font-size: 58px;
     line-height: .9;
@@ -975,14 +978,19 @@ footer {
 
 .admin-note p {
     max-width: 260px;
+
     color: var(--gray);
+
     line-height: 1.6;
 }
 
 .admin-action {
     display: inline-block;
+
     margin-top: 35px;
+
     color: white;
+
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 1px;
@@ -990,28 +998,14 @@ footer {
 
 .settings-status {
     min-height: 18px;
+
     margin-top: 15px;
+
     color: #25d366;
+
     font-family: var(--font-mono);
     font-size: 10px;
 }
-
-.admin-database {
-    padding-top: 35px;
-}
-
-.footer-logo {
-    color: white;
-
-    font-family: var(--font-title);
-
-    font-size: 25px;
-}
-
-.footer-logo span {
-    color: var(--red);
-}
-
 
 /* =========================
    MODAL
@@ -1019,7 +1013,6 @@ footer {
 
 .modal {
     position: fixed;
-
     inset: 0;
 
     background: rgba(0, 0, 0, .88);
@@ -1048,7 +1041,7 @@ footer {
 
     background: #101010;
 
-    border: 1px solid  #fff;
+    border: 1px solid #fff;
 
     box-shadow:
         10px 10px 0 var(--red);
@@ -1078,9 +1071,7 @@ footer {
     color: var(--red);
 
     font-family: var(--font-mono);
-
     font-size: 9px;
-
     letter-spacing: 2px;
 }
 
@@ -1090,7 +1081,6 @@ footer {
     font-family: var(--font-title);
 
     font-size: 65px;
-
     line-height: .85;
 }
 
@@ -1107,11 +1097,10 @@ footer {
 }
 
 .modal-summary {
-    border-top: 1px solid  #fff;
-    border-bottom: 1px solid  #fff;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
 
     padding: 15px 0;
-
     margin-bottom: 20px;
 }
 
@@ -1126,13 +1115,11 @@ footer {
     color: #555;
 
     font-family: var(--font-mono);
-
     font-size: 9px;
 }
 
 .modal-summary strong {
     font-family: var(--font-mono);
-
     font-size: 11px;
 }
 
@@ -1146,11 +1133,9 @@ footer {
     text-align: center;
 
     background: #25d366;
-
     color: #000;
 
     font-family: var(--font-title);
-
     font-size: 17px;
 
     transition: .2s;
@@ -1163,6 +1148,328 @@ footer {
         5px 5px 0 #0b7c37;
 }
 
+/* ==================================================
+   ADMIN LOGIN OVERLAY
+   ================================================== */
+
+.admin-login-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, .75),
+            rgba(0, 0, 0, .85)
+        ),
+        url('bg merah.png');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 99999;
+}
+
+/* Setelah login berhasil */
+
+.admin-login-overlay.hidden {
+    display: none !important;
+}
+
+/* Dashboard dikunci sebelum login */
+
+.admin-page.admin-locked .navbar,
+.admin-page.admin-locked main,
+.admin-page.admin-locked footer {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* LOGIN CONTAINER */
+
+.admin-login-overlay .login-container {
+    width: 100%;
+    max-width: 440px;
+
+    position: relative;
+
+    z-index: 100000;
+}
+
+/* LOGIN BOX */
+
+.admin-login-overlay .login-box {
+    width: 100%;
+
+    padding: 42px 38px;
+
+    border: 1px solid rgba(255, 255, 255, .2);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(20, 20, 20, .98),
+            rgba(5, 5, 5, .98)
+        );
+
+    box-shadow:
+        0 0 50px rgba(255, 0, 0, .15),
+        10px 10px 0 rgba(139, 0, 0, .8);
+
+    position: relative;
+}
+
+/* GARIS MERAH ATAS */
+
+.admin-login-overlay .login-box::before {
+    content: "";
+
+    position: absolute;
+
+    top: -1px;
+    left: -1px;
+
+    width: 70px;
+    height: 4px;
+
+    background: var(--red);
+}
+
+/* GARIS MERAH BAWAH */
+
+.admin-login-overlay .login-box::after {
+    content: "";
+
+    position: absolute;
+
+    right: -1px;
+    bottom: -1px;
+
+    width: 70px;
+    height: 4px;
+
+    background: var(--red);
+}
+
+/* LOGIN TOP */
+
+.admin-login-overlay .login-top {
+    margin-bottom: 35px;
+}
+
+.admin-login-overlay .login-number {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #777;
+
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+/* JUDUL */
+
+.admin-login-overlay .login-title {
+    margin: 0;
+
+    color: white;
+
+    font-family: var(--font-title);
+
+    font-size: 52px;
+
+    line-height: .9;
+    letter-spacing: 1px;
+}
+
+.admin-login-overlay .login-title span {
+    color: var(--red);
+}
+
+/* SUBTITLE */
+
+.admin-login-overlay .login-subtitle {
+    margin-top: 15px;
+
+    color: #777;
+
+    font-family: var(--font-mono);
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+    letter-spacing: 1px;
+}
+
+/* FORM */
+
+.admin-login-overlay .login-form .field {
+    margin-bottom: 22px;
+}
+
+.admin-login-overlay .login-form label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: white;
+
+    font-family: var(--font-main);
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+}
+
+.admin-login-overlay .login-form label span {
+    color: var(--red);
+
+    margin-right: 8px;
+
+    font-family: var(--font-mono);
+}
+
+/* INPUT */
+
+.admin-login-overlay .login-form input {
+    width: 100%;
+
+    padding: 16px;
+
+    border: 1px solid #292929;
+
+    outline: none;
+
+    background: #090909;
+
+    color: white;
+
+    font-family: var(--font-mono);
+
+    font-size: 13px;
+
+    transition: .25s;
+}
+
+.admin-login-overlay .login-form input::placeholder {
+    color: #555;
+}
+
+.admin-login-overlay .login-form input:focus {
+    border-color: var(--red);
+
+    box-shadow:
+        0 0 0 1px rgba(225, 6, 0, .2);
+}
+
+/* LOGIN BUTTON */
+
+.admin-login-overlay .login-btn {
+    width: 100%;
+
+    min-height: 58px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    background: var(--red);
+
+    color: white;
+
+    font-family: var(--font-title);
+
+    font-size: 20px;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.admin-login-overlay .login-btn:hover {
+    background: white;
+
+    color: black;
+
+    transform: translate(-3px, -3px);
+
+    box-shadow:
+        6px 6px 0 var(--red);
+}
+
+.admin-login-overlay .login-btn:active {
+    transform: translate(0, 0);
+}
+
+/* ERROR */
+
+.admin-login-overlay .login-error {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 13px 15px;
+
+    border-left: 3px solid var(--red);
+
+    background: rgba(225, 6, 0, .1);
+
+    color: #ff5555;
+
+    font-family: var(--font-mono);
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+.admin-login-overlay .login-error.show {
+    display: block;
+}
+
+/* LOGIN FOOTER */
+
+.admin-login-overlay .login-footer {
+    margin-top: 28px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #222;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    color: #555;
+
+    font-family: var(--font-mono);
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+}
+
+.admin-login-overlay .login-footer span:last-child {
+    color: #777;
+}
 
 /* =========================
    RESPONSIVE
@@ -1183,7 +1490,6 @@ footer {
 
     .order-layout {
         grid-template-columns: 1fr;
-
         gap: 60px;
     }
 
@@ -1195,9 +1501,7 @@ footer {
     .order-side {
         max-width: 600px;
     }
-
 }
-
 
 @media (max-width: 600px) {
 
@@ -1268,7 +1572,6 @@ footer {
 
     .size-btn {
         min-height: 52px;
-
         font-size: 16px;
     }
 
@@ -1290,44 +1593,39 @@ footer {
 
     footer {
         flex-direction: column;
-
         gap: 15px;
-
         text-align: center;
     }
 
-}
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    /* ADMIN LOGIN MOBILE */
+
+    .admin-login-overlay {
+        padding: 18px;
+    }
+
+    .admin-login-overlay .login-box {
+        padding: 32px 24px;
+
+        box-shadow:
+            6px 6px 0 rgba(139, 0, 0, .8);
+    }
+
+    .admin-login-overlay .login-title {
+        font-size: 42px;
+    }
+
+    .admin-login-overlay .login-footer {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .brand-logo {
+        width: 65px;
+        height: 65px;
+    }
+
+    .brand h1 {
+        font-size: 20px;
+    }
 }
 
-.brand-logo {
-    width: 90px;
-    height: 90px;
-    border-radius: 8px;
-    object-fit: cover;
-    object-position: center;
-    flex-shrink: 0;
-}
-
-.brand div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.brand h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.brand small {
-    margin: 0;
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 1px;
-}
