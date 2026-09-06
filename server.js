@@ -1,4 +1,3 @@
-
 const express = require("express");
 const { Pool } = require("pg");
 const cors = require("cors");
@@ -77,7 +76,7 @@ const db = new Pool({
 });
 
 // ======================================================
-// HANDLE DATABASE ERROR
+// DATABASE ERROR
 // ======================================================
 
 db.on("error", (error) => {
@@ -297,7 +296,7 @@ function verifyAdminToken(token) {
 }
 
 // ======================================================
-// MIDDLEWARE PROTEKSI ADMIN
+// MIDDLEWARE ADMIN
 // ======================================================
 
 function requireAdmin(req, res, next) {
@@ -526,7 +525,6 @@ app.get(
 
 // ======================================================
 // GET SETTINGS
-// PUBLIC
 // ======================================================
 
 app.get(
@@ -582,7 +580,7 @@ app.get(
                 settings: {
 
                     price:
-                        settings.price,
+                        Number(settings.price) || 140000,
 
                     whatsappNumber:
                         settings.whatsapp_number ||
@@ -619,7 +617,6 @@ app.get(
 
 // ======================================================
 // UPDATE SETTINGS
-// ADMIN ONLY
 // ======================================================
 
 app.put(
@@ -657,8 +654,7 @@ app.put(
 
             if (
                 imageData &&
-                typeof imageData ===
-                    "string"
+                typeof imageData === "string"
             ) {
 
                 const maxImageSize =
@@ -700,7 +696,6 @@ app.put(
                 )
                 ON CONFLICT (id)
                 DO UPDATE SET
-
                     price =
                         EXCLUDED.price,
 
@@ -714,7 +709,6 @@ app.put(
                         CURRENT_TIMESTAMP
                 `,
                 [
-
                     Number(price),
 
                     whatsappNumber
@@ -724,7 +718,6 @@ app.put(
                         : "",
 
                     imageData
-
                 ]
             );
 
@@ -764,7 +757,6 @@ app.put(
 
 // ======================================================
 // GET SEMUA PESANAN
-// ADMIN ONLY
 // ======================================================
 
 app.get(
@@ -824,7 +816,6 @@ app.get(
 
 // ======================================================
 // TAMBAH PESANAN
-// PUBLIC
 // ======================================================
 
 app.post(
@@ -832,6 +823,19 @@ app.post(
     async (req, res) => {
 
         try {
+
+            console.log(
+                "================================="
+            );
+
+            console.log(
+                "MENERIMA PESANAN BARU"
+            );
+
+            console.log(
+                "DATA:",
+                req.body
+            );
 
             const {
                 name,
@@ -842,13 +846,23 @@ app.post(
                 total
             } = req.body;
 
+            // ==================================================
+            // VALIDASI DATA
+            // ==================================================
+
             if (
                 !name ||
                 !address ||
                 !size ||
-                !quantity ||
-                !total
+                quantity === undefined ||
+                quantity === null ||
+                total === undefined ||
+                total === null
             ) {
+
+                console.error(
+                    "DATA PESANAN TIDAK LENGKAP"
+                );
 
                 return res.status(400).json({
 
@@ -861,16 +875,84 @@ app.post(
 
             }
 
+            const cleanName =
+                String(name).trim();
+
+            const cleanAddress =
+                String(address).trim();
+
+            const cleanWhatsapp =
+                buyerWhatsapp
+                    ? String(
+                        buyerWhatsapp
+                    ).trim()
+                    : null;
+
+            const cleanSize =
+                String(size).trim();
+
             const qty =
                 Number(quantity);
 
             const orderTotal =
                 Number(total);
 
+            // ==================================================
+            // VALIDASI JUMLAH
+            // ==================================================
+
             if (
-                !Number.isFinite(qty) ||
+                !cleanName ||
+                !cleanAddress ||
+                !cleanSize
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Nama, alamat, dan ukuran wajib diisi."
+
+                });
+
+            }
+
+            if (
+                !Number.isInteger(qty) ||
+                qty < 1
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Jumlah kaos tidak valid."
+
+                });
+
+            }
+
+            if (qty > 20) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Maksimal pembelian adalah 20 kaos."
+
+                });
+
+            }
+
+            // ==================================================
+            // VALIDASI TOTAL
+            // ==================================================
+
+            if (
                 !Number.isFinite(orderTotal) ||
-                qty <= 0 ||
                 orderTotal <= 0
             ) {
 
@@ -879,11 +961,15 @@ app.post(
                     success: false,
 
                     message:
-                        "Quantity atau total tidak valid."
+                        "Total harga tidak valid."
 
                 });
 
             }
+
+            // ==================================================
+            // SIMPAN KE NEON
+            // ==================================================
 
             const result =
                 await db.query(
@@ -906,35 +992,37 @@ app.post(
                         $5,
                         $6
                     )
-                    RETURNING id
+                    RETURNING
+                        id,
+                        created_at
                     `,
                     [
-
-                        String(name).trim(),
-
-                        String(address).trim(),
-
-                        buyerWhatsapp
-                            ? String(
-                                buyerWhatsapp
-                            ).trim()
-                            : null,
-
-                        String(size).trim(),
-
+                        cleanName,
+                        cleanAddress,
+                        cleanWhatsapp,
+                        cleanSize,
                         qty,
-
                         orderTotal
-
                     ]
                 );
 
+            const savedOrder =
+                result.rows[0];
+
             console.log(
-                "ORDER BERHASIL DISIMPAN:",
-                result.rows[0].id
+                "ORDER BERHASIL DISIMPAN"
             );
 
-            res.status(201).json({
+            console.log(
+                "ORDER ID:",
+                savedOrder.id
+            );
+
+            console.log(
+                "================================="
+            );
+
+            return res.status(201).json({
 
                 success: true,
 
@@ -942,22 +1030,59 @@ app.post(
                     "Pesanan berhasil disimpan.",
 
                 orderId:
-                    result.rows[0].id
+                    savedOrder.id,
+
+                createdAt:
+                    savedOrder.created_at
 
             });
 
         } catch (error) {
 
             console.error(
-                "CREATE ORDER ERROR:",
+                "================================="
+            );
+
+            console.error(
+                "CREATE ORDER ERROR"
+            );
+
+            console.error(
+                "MESSAGE:",
                 error.message
             );
 
-            res.status(500).json({
+            console.error(
+                "CODE:",
+                error.code
+            );
+
+            console.error(
+                "DETAIL:",
+                error.detail
+            );
+
+            console.error(
+                "HINT:",
+                error.hint
+            );
+
+            console.error(
+                "TABLE/COLUMN:",
+                error.table,
+                error.column
+            );
+
+            console.error(
+                "================================="
+            );
+
+            return res.status(500).json({
 
                 success: false,
 
                 message:
+                    error.message ||
                     "Gagal menyimpan pesanan."
 
             });
@@ -969,7 +1094,6 @@ app.post(
 
 // ======================================================
 // HAPUS SEMUA PESANAN
-// ADMIN ONLY
 // ======================================================
 
 app.delete(
@@ -1083,7 +1207,7 @@ const server =
     );
 
 // ======================================================
-// HANDLE SERVER ERROR
+// SERVER ERROR
 // ======================================================
 
 server.on(
@@ -1138,4 +1262,3 @@ process.on(
     "SIGTERM",
     shutdown
 );
-
